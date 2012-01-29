@@ -1,0 +1,17 @@
+@prefix rdfs:     <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:      <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix ja:       <http://jena.hpl.hp.com/2005/11/Assembler#> .
+@prefix sdb:      <http://jena.hpl.hp.com/2007/sdb#> .
+@prefix jumble:   <http://rootdev.net/vocab/jumble#> .
+
+# For use with Joseki.
+[] ja:loadClass "net.rootdev.fusekisdbconnect.SDBConnect" .
+
+<#dataset> rdf:type jumble:SDBConnect ;
+    sdb:layout "layout2/index" ;
+    sdb:connection [
+        rdf:type sdb:SDBConnection ;
+        sdb:sdbType "h2:mem" ;
+        sdb:sdbName "mem" ;
+    ]
+.
