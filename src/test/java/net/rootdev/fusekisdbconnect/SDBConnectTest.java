@@ -9,6 +9,7 @@ import com.hp.hpl.jena.assembler.assemblers.AssemblerGroup;
 import com.hp.hpl.jena.query.Dataset;
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
+import com.hp.hpl.jena.query.ResultSet;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import com.hp.hpl.jena.sparql.core.assembler.AssemblerUtils;
@@ -52,10 +53,27 @@ public class SDBConnectTest {
     public void testQueryWorks() {
         ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
-        //Dataset ds = DatasetImpl.wrap(toQuery);
-        Dataset ds = new DatasetImpl(toQuery);
+        Dataset ds = DatasetImpl.wrap(toQuery);
+        //Dataset ds = new DatasetImpl(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
         assertTrue("Querying works", !qe.execAsk());
+    }
+    
+    @Test
+    public void testFullQueryWorks() {
+        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
+        toQuery.getDatasetGraph().getStore().getTableFormatter().format();
+        Dataset ds = DatasetImpl.wrap(toQuery);
+        //Dataset ds = new DatasetImpl(toQuery);
+        QueryExecution qe = QueryExecutionFactory.create("SELECT * { ?s ?p ?o }", ds);
+        ResultSet r = qe.execSelect();
+        assertTrue("Querying works", !r.hasNext());
+        qe.close();
+        
+        qe = QueryExecutionFactory.create("SELECT * { graph ?g { ?s ?p ?o } }", ds);
+        r = qe.execSelect();
+        assertTrue("Querying with named graphs works", !r.hasNext());
+        qe.close();
     }
     
     @Test
@@ -73,8 +91,8 @@ public class SDBConnectTest {
     public void testReconnectWorks() {
         ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
-        //Dataset ds = DatasetImpl.wrap(toQuery);
-        Dataset ds = new DatasetImpl(toQuery);
+        Dataset ds = DatasetImpl.wrap(toQuery);
+        //Dataset ds = new DatasetImpl(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
         assertTrue("Querying still works", !qe.execAsk());
         

@@ -17,6 +17,8 @@ import com.hp.hpl.jena.sparql.modify.UpdateEngineFactory;
 import com.hp.hpl.jena.sparql.util.Context;
 import com.hp.hpl.jena.update.GraphStore;
 import com.hp.hpl.jena.update.UpdateRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -24,6 +26,8 @@ import com.hp.hpl.jena.update.UpdateRequest;
  */
 public class UpdateAndQueryEngine implements
         UpdateEngineFactory, QueryEngineFactory {
+    
+    final static Logger log = LoggerFactory.getLogger(UpdateAndQueryEngine.class);
     
     /** Update methods **/
     

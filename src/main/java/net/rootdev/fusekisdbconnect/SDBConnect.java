@@ -15,6 +15,8 @@ import com.hp.hpl.jena.sdb.assembler.StoreDescAssembler;
 import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import com.hp.hpl.jena.sparql.engine.QueryEngineRegistry;
 import com.hp.hpl.jena.sparql.modify.UpdateEngineRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -23,10 +25,13 @@ import com.hp.hpl.jena.sparql.modify.UpdateEngineRegistry;
 public class SDBConnect extends AssemblerBase {
     protected static boolean initialised = false;
     
+    final static Logger log = LoggerFactory.getLogger(SDBConnect.class);
+    
     final static Resource TYPE = ResourceFactory.createResource("http://rootdev.net/vocab/jumble#SDBConnect");
     final static StoreDescAssembler sdAss = new StoreDescAssembler();
     
     static {
+        log.warn("Hooking in to update and query engines");
         UpdateAndQueryEngine uqe = new UpdateAndQueryEngine();
         QueryEngineRegistry.addFactory(uqe);
         UpdateEngineRegistry.addFactory(uqe);
@@ -35,6 +40,7 @@ public class SDBConnect extends AssemblerBase {
     // Hook into assembler
     public static void whenRequiredByAssembler( AssemblerGroup g )
     {
+        log.warn("Hooking in to assemblers");
         initialised = true;
         if (g == null) g = Assembler.general;
         g.implementWith(TYPE, new SDBConnect());
@@ -42,8 +48,9 @@ public class SDBConnect extends AssemblerBase {
 
     @Override
     public Object open(Assembler asmblr, Resource rsrc, Mode mode) {
+        log.warn("Opening");
         StoreDesc sd = sdAss.open(asmblr, rsrc, mode);
-        //return DatasetImpl.wrap(new ReconnectingDatasetGraph(sd));
-        return new DatasetImpl(new ReconnectingDatasetGraph(sd));
+        return DatasetImpl.wrap(new ReconnectingDatasetGraph(sd));
+        //return new DatasetImpl(new ReconnectingDatasetGraph(sd));
     }
 }

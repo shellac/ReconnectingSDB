@@ -35,6 +35,10 @@ public class ReconnectingDatasetGraph extends DatasetGraphBase
     }
     
     public DatasetStoreGraph getDatasetGraph() {
+        return getConnectedStore();
+    }
+    
+    private DatasetStoreGraph getConnectedStore() {
         if (store == null) {
             store = (DatasetStoreGraph) SDBFactory.connectGraphStore(
                     SDBConnectionFactory.create(storeDesc.connDesc),
@@ -72,44 +76,42 @@ public class ReconnectingDatasetGraph extends DatasetGraphBase
     
     @Override
     public Graph getDefaultGraph() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().getDefaultGraph();
     }
 
     @Override
     public Graph getGraph(Node node) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().getGraph(node);
     }
 
     @Override
     public Iterator<Node> listGraphNodes() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().listGraphNodes();
     }
 
     @Override
     public Iterator<Quad> find(Node node, Node node1, Node node2, Node node3) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().find(node, node1, node2, node3);
     }
 
     @Override
     public Iterator<Quad> findNG(Node node, Node node1, Node node2, Node node3) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().findNG(node, node1, node2, node3);
     }
 
     @Override
     public Dataset toDataset() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return getConnectedStore().toDataset();
     }
 
     @Override
     public void startRequest() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        getConnectedStore().startRequest();
     }
 
     @Override
     public void finishRequest() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        getConnectedStore().finishRequest();
     }
-    
-    
     
 }
