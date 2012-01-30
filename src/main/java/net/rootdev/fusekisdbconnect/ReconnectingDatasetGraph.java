@@ -55,7 +55,7 @@ public class ReconnectingDatasetGraph extends DatasetGraphBase
             store.getStore().getConnection().execQuery("SELECT 1;");
             return false;
         } catch (Exception e) {
-            log.warn("Connection test failed. Assuming dead.", e);
+            log.warn("Connection test failed. Assuming dead. [{}]", e.getMessage());
             return true;
         }
     }

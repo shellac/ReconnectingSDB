@@ -43,6 +43,7 @@ public class SDBConnect extends AssemblerBase {
     @Override
     public Object open(Assembler asmblr, Resource rsrc, Mode mode) {
         StoreDesc sd = sdAss.open(asmblr, rsrc, mode);
-        return DatasetImpl.wrap(new ReconnectingDatasetGraph(sd));
+        //return DatasetImpl.wrap(new ReconnectingDatasetGraph(sd));
+        return new DatasetImpl(new ReconnectingDatasetGraph(sd));
     }
 }

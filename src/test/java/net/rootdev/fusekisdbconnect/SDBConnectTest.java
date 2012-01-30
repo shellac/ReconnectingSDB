@@ -52,7 +52,8 @@ public class SDBConnectTest {
     public void testQueryWorks() {
         ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
-        Dataset ds = DatasetImpl.wrap(toQuery);
+        //Dataset ds = DatasetImpl.wrap(toQuery);
+        Dataset ds = new DatasetImpl(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
         assertTrue("Querying works", !qe.execAsk());
     }
@@ -72,7 +73,8 @@ public class SDBConnectTest {
     public void testReconnectWorks() {
         ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
-        Dataset ds = DatasetImpl.wrap(toQuery);
+        //Dataset ds = DatasetImpl.wrap(toQuery);
+        Dataset ds = new DatasetImpl(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
         assertTrue("Querying still works", !qe.execAsk());
         

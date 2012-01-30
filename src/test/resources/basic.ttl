@@ -11,7 +11,7 @@
     sdb:layout "layout2/index" ;
     sdb:connection [
         rdf:type sdb:SDBConnection ;
-        sdb:sdbType "h2:mem" ;
-        sdb:sdbName "mem" ;
+        sdb:sdbType "h2:file" ;
+        sdb:sdbName "target/test-DB/H2" ;
     ]
 .
