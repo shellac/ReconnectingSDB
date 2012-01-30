@@ -44,12 +44,13 @@ public class SDBConnectTest {
     public void testAssemblerWorks() {
         Object result = AssemblerUtils.build("basic.ttl", SDBConnect.TYPE);
         assertNotNull("We have created an object", result);
-        assertEquals("Made object of right type", ReconnectingDatasetGraph.class, result.getClass());
+        assertEquals("Made object superficially of right type", DatasetImpl.class, result.getClass());
+        assertEquals("Made object of right type", ReconnectingDatasetGraph.class, ((Dataset) result).asDatasetGraph().getClass());
     }
     
     @Test
     public void testQueryWorks() {
-        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE);
+        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
         Dataset ds = DatasetImpl.wrap(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
@@ -58,7 +59,7 @@ public class SDBConnectTest {
     
     @Test
     public void testUpdateWorks() {
-        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE);
+        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
         UpdateRequest ur = UpdateFactory.create("insert data { <http://example.com/> <http://example.com/prop> 1 }");
         UpdateProcessor u = UpdateExecutionFactory.create(ur, toQuery);
@@ -69,7 +70,7 @@ public class SDBConnectTest {
     
     @Test
     public void testReconnectWorks() {
-        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE);
+        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ((Dataset) AssemblerUtils.build("basic.ttl", SDBConnect.TYPE)).asDatasetGraph();
         toQuery.getDatasetGraph().getStore().getTableFormatter().format();
         Dataset ds = DatasetImpl.wrap(toQuery);
         QueryExecution qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
