@@ -1,4 +1,5 @@
-= Introduction to ReconnectingSDB =
+# Introduction to ReconnectingSDB #
+
 
 A common issue with SDB is that the connection has died:
 database connections are finite. We recommend that SDB is used
@@ -8,7 +9,8 @@ possible with fuseki.
 This module doesn't pool connections! However it will check the
 connection is working and attempt to reconnect if possible.
 
-== Getting it ==
+## Getting it ##
+
 
     $ git clone git@github.com:shellac/ReconnectingSDB.git
     $ cd ReconnectingSDB
@@ -16,7 +18,7 @@ connection is working and attempt to reconnect if possible.
 
 The jar will be in `target/ReconnectingSDB-0.1-SNAPSHOT.jar`.
 
-== Using it ==
+## Using it ##
 
 Put the above jar on your classpath (fiddly with fuseki), and
 use something like the following dataset description:
