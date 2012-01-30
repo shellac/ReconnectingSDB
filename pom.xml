@@ -8,7 +8,7 @@
     <version>0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>FusekiSDBConnect</name>
+    <name>ReconnectingSDB</name>
     <url>http://maven.apache.org</url>
     <build>
         <plugins>
