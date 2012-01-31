@@ -6,10 +6,7 @@ package net.rootdev.fusekisdbconnect;
 
 import com.hp.hpl.jena.assembler.AssemblerHelp;
 import com.hp.hpl.jena.assembler.assemblers.AssemblerGroup;
-import com.hp.hpl.jena.query.Dataset;
-import com.hp.hpl.jena.query.QueryExecution;
-import com.hp.hpl.jena.query.QueryExecutionFactory;
-import com.hp.hpl.jena.query.ResultSet;
+import com.hp.hpl.jena.query.*;
 import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.sparql.core.DatasetImpl;
 import com.hp.hpl.jena.sparql.core.assembler.AssemblerUtils;
@@ -104,5 +101,24 @@ public class SDBConnectTest {
         
         qe = QueryExecutionFactory.create("ASK { ?s ?p ?o }", ds);
         assertTrue("Reconnected query works with test", !qe.execAsk());
+    }
+    
+    @Test
+    public void testUnionWorks() {
+        Dataset ds = (Dataset) AssemblerUtils.build("union.ttl", SDBConnect.TYPE);
+        ReconnectingDatasetGraph toQuery = (ReconnectingDatasetGraph) ds.asDatasetGraph();
+        toQuery.getDatasetGraph().getStore().getTableFormatter().format();
+        UpdateRequest ur = UpdateFactory.create(
+                "insert data {"
+                + "graph <http://example.com/a> { <http://example.com/1> <http://example.com/prop> 1 }"
+                + "graph <http://example.com/b> { <http://example.com/2> <http://example.com/prop> 2 }"
+                + "}");
+        UpdateProcessor u = UpdateExecutionFactory.create(ur, toQuery);
+        u.execute();
+        
+        QueryExecution qe = QueryExecutionFactory.create("SELECT * { ?s ?p ?o }", ds);
+        ResultSetRewindable r = ResultSetFactory.makeRewindable(qe.execSelect());
+        
+        assertEquals("We have a union!", 2, r.size());
     }
 }
