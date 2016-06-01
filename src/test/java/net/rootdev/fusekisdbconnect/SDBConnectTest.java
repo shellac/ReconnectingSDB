@@ -4,17 +4,17 @@
  */
 package net.rootdev.fusekisdbconnect;
 
-import com.hp.hpl.jena.assembler.AssemblerHelp;
-import com.hp.hpl.jena.assembler.assemblers.AssemblerGroup;
-import com.hp.hpl.jena.query.*;
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.sparql.core.DatasetImpl;
-import com.hp.hpl.jena.sparql.core.assembler.AssemblerUtils;
-import com.hp.hpl.jena.update.UpdateExecutionFactory;
-import com.hp.hpl.jena.update.UpdateFactory;
-import com.hp.hpl.jena.update.UpdateProcessor;
-import com.hp.hpl.jena.update.UpdateRequest;
-import com.hp.hpl.jena.util.FileManager;
+import org.apache.jena.assembler.AssemblerHelp;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.query.*;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.sparql.core.DatasetImpl;
+import org.apache.jena.sparql.core.assembler.AssemblerUtils;
+import org.apache.jena.update.UpdateExecutionFactory;
+import org.apache.jena.update.UpdateFactory;
+import org.apache.jena.update.UpdateProcessor;
+import org.apache.jena.update.UpdateRequest;
+import org.apache.jena.util.FileManager;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
