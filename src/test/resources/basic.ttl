@@ -8,6 +8,7 @@
 [] ja:loadClass "net.rootdev.fusekisdbconnect.SDBConnect" .
 
 <#dataset> rdf:type jumble:SDBConnect ;
+	jumble:reconnectQuery "SELECT 1" ;
     sdb:layout "layout2/index" ;
     sdb:connection [
         rdf:type sdb:SDBConnection ;

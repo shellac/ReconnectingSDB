@@ -4,61 +4,84 @@
  */
 package net.rootdev.fusekisdbconnect;
 
-import com.hp.hpl.jena.assembler.Assembler;
-import com.hp.hpl.jena.assembler.Mode;
-import com.hp.hpl.jena.assembler.assemblers.AssemblerBase;
-import com.hp.hpl.jena.assembler.assemblers.AssemblerGroup;
-import com.hp.hpl.jena.rdf.model.Property;
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
-import com.hp.hpl.jena.sdb.SDB;
-import com.hp.hpl.jena.sdb.StoreDesc;
-import com.hp.hpl.jena.sdb.assembler.StoreDescAssembler;
-import com.hp.hpl.jena.sparql.core.DatasetImpl;
-import com.hp.hpl.jena.sparql.engine.QueryEngineRegistry;
-import com.hp.hpl.jena.sparql.modify.UpdateEngineRegistry;
+import org.apache.jena.assembler.Assembler;
+import org.apache.jena.assembler.Mode;
+import org.apache.jena.assembler.assemblers.AssemblerBase;
+import org.apache.jena.assembler.assemblers.AssemblerGroup;
+import org.apache.jena.query.Dataset;
+import org.apache.jena.rdf.model.Property;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
+import org.apache.jena.sdb.SDB;
+import org.apache.jena.sdb.StoreDesc;
+import org.apache.jena.sdb.assembler.AssemblerVocab;
+import org.apache.jena.sdb.assembler.StoreDescAssembler;
+import org.apache.jena.sparql.core.DatasetImpl;
+import org.apache.jena.sparql.core.assembler.AssemblerUtils;
+import org.apache.jena.sparql.engine.QueryEngineRegistry;
+import org.apache.jena.sparql.modify.UpdateEngineRegistry;
+import org.apache.jena.sparql.util.graph.GraphUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.jena.sdb.util.Vocab;
+import org.apache.jena.sdb.engine.QueryEngineSDB;
+import org.apache.jena.sdb.modify.UpdateEngineSDB;
+import org.apache.jena.assembler.JA;
 /**
  *
  * @author Damian Steer <d.steer@bris.ac.uk>
  */
 public class SDBConnect extends AssemblerBase {
+	
+    private static final String NS = "http://rootdev.net/vocab/jumble#" ;
+	
     protected static boolean initialised = false;
-    
     final static Logger log = LoggerFactory.getLogger(SDBConnect.class);
     
-    final static Resource TYPE = ResourceFactory.createResource("http://rootdev.net/vocab/jumble#SDBConnect");
-    final static Property UNION = ResourceFactory.createProperty("http://rootdev.net/vocab/jumble#defaultUnionGraph");
+    
+    
+    final static Resource TYPE = Vocab.type(NS, "SDBConnect") ;
+    final static Property UNION = Vocab.property(NS, "defaultUnionGraph");
+    final static Property ReconnectQuery = Vocab.property(NS, "reconnectQuery");
     
     final static StoreDescAssembler sdAss = new StoreDescAssembler();
     
     static {
-        log.warn("Hooking in to update and query engines");
-        UpdateAndQueryEngine uqe = new UpdateAndQueryEngine();
-        QueryEngineRegistry.addFactory(uqe);
-        UpdateEngineRegistry.addFactory(uqe);
+        init();
     }
     
-    // Hook into assembler
-    public static void whenRequiredByAssembler( AssemblerGroup g )
-    {
-        log.warn("Hooking in to assemblers");
+    public static void init() {
+    	
+    	if(initialised) return;
+    	
+    	SDB.init();
+    	    	
+    	Assembler.general.implementWith(TYPE, new SDBConnect());
+    	
+    	log.warn("Hooking in to update and query engines");
+        UpdateAndQueryEngine uqe = new UpdateAndQueryEngine();
+        
+        QueryEngineRegistry.addFactory(uqe);
+        UpdateEngineRegistry.addFactory(uqe);
+        
         initialised = true;
-        if (g == null) g = Assembler.general;
-        g.implementWith(TYPE, new SDBConnect());
     }
 
     @Override
-    public Object open(Assembler asmblr, Resource rsrc, Mode mode) {
+    public Object open(Assembler asmblr, Resource root, Mode mode) {
         
-        if (rsrc.hasProperty(UNION, "true")) {
+        if (root.hasProperty(UNION, "true")) {
             SDB.getContext().set(SDB.unionDefaultGraph, true);
         }
         
-        StoreDesc sd = sdAss.open(asmblr, rsrc, mode);
-        return DatasetImpl.wrap(new ReconnectingDatasetGraph(sd));
+        String reconnectQuery = GraphUtils.getStringValue(root, ReconnectQuery);
+        
+        StoreDesc sd = sdAss.open(asmblr, root, mode);
+        Dataset ds = DatasetImpl.wrap(new ReconnectingDatasetGraph(sd, reconnectQuery));
+        
+        AssemblerUtils.setContext(root, ds.getContext());
+        
+        return ds;
         //return new DatasetImpl(new ReconnectingDatasetGraph(sd));
     }
 }

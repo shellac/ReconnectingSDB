@@ -10,6 +10,7 @@
 <#dataset> rdf:type jumble:SDBConnect ;
     sdb:layout "layout2/index" ;
     jumble:defaultUnionGraph "true" ;
+    jumble:reconnectQuery "SELECT 1" ;
     sdb:connection [
         rdf:type sdb:SDBConnection ;
         sdb:sdbType "h2:file" ;
