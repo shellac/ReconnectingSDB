@@ -35,6 +35,7 @@ use something like the following dataset description:
     jumble:SDBConnect  rdfs:subClassOf  ja:RDFDataset .
     
     <#dataset> rdf:type jumble:SDBConnect ;
+        jumble:reconnectQuery "SELECT 1" ;
         sdb:layout "layout2/index" ;
         sdb:connection [
             rdf:type sdb:SDBConnection ;
